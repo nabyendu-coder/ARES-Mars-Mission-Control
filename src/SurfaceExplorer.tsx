@@ -17,6 +17,8 @@ function formatDistance(meters: number): string {
 }
 
 export default function App() {
+  const baseUrl = import.meta.env.BASE_URL;
+  const realRasterLayersAvailable = import.meta.env.DEV;
   const mapRef = useRef<Map | null>(null);
   const [selection, setSelection] = useState<RasterSelection>("synthetic");
   const [opacity, setOpacity] = useState(88);
@@ -44,14 +46,14 @@ export default function App() {
   return (
     <main className="explorer">
       <header className="topbar">
-        <a className="brand" href="./" aria-label="ARES Surface Explorer">
+        <a className="brand" href={baseUrl} aria-label="ARES Surface Explorer">
           <span className="brand-symbol">A</span>
           <span className="brand-wordmark">ARES <i>/</i> SURFACE EXPLORER</span>
         </a>
         <div className="environment-tag"><span className={`status-led ${status}`} />{statusLabel(status, selection)}</div>
         <div className="mission-tag">
           <nav className="view-switch" aria-label="View mode">
-            <a className="view-switch-link" href="/?view=mission">3D TERRAIN</a>
+            <a className="view-switch-link" href={`${baseUrl}?view=mission`}>3D TERRAIN</a>
             <span className="view-switch-current" aria-current="page">2D EXPLORER</span>
           </nav>
           <span>RASTER SOURCE <strong>{selection === "none" ? "NONE" : "LOCAL"}</strong></span>
@@ -93,10 +95,15 @@ export default function App() {
             onChange={(event) => setSelection(event.target.value as RasterSelection)}
           >
             <option value="synthetic">Synthetic test texture</option>
-            <option value="optical">Optical Preview</option>
-            <option value="hillshade">Hillshade</option>
+            <option value="optical" disabled={!realRasterLayersAvailable}>Optical Preview{realRasterLayersAvailable ? "" : " (local only)"}</option>
+            <option value="hillshade" disabled={!realRasterLayersAvailable}>Hillshade{realRasterLayersAvailable ? "" : " (local only)"}</option>
             <option value="none">No raster / grid only</option>
           </select>
+          {!realRasterLayersAvailable && (
+            <p className="local-raster-note" role="note">
+              Optical Preview and Hillshade need the local GDAL service and are not hosted here. This public view uses the synthetic test layer only.
+            </p>
+          )}
 
           <div className={`opacity-control ${rasterVisible ? "" : "disabled"}`}>
             <div className="control-line">

@@ -19,3 +19,7 @@ The 3D display supports terrain orbit/pan/zoom, hover probing, terrain targets, 
 The included source pipeline is [`prototypes/mission-control-3d/pipeline/build_data.py`](prototypes/mission-control-3d/pipeline/build_data.py). It reads source rasters and writes a validated browser data bundle to a chosen output project directory. It requires Python packages `rasterio`, `numpy`, and `pillow`. The pipeline's synthetic GeoTIFF tests are in `prototypes/mission-control-3d/tests/pipeline.test.py`; they were not run in this environment because rasterio is unavailable and no dependencies were installed.
 
 The embedded browser data was copied unchanged from the supplied application archive. No original TIFFs, sidecars, or scientific source datasets were modified.
+
+## GitHub Pages deployment
+
+The Pages build publishes the bundled 3D experience and the 2D synthetic projection test at the repository site. Optical Preview and Hillshade are disabled on the public static build because they require the local GDAL service and TIFFs, which are not hosted here. A publicly accessible GDAL-compatible raster endpoint and storage are required before enabling those layers for remote users.

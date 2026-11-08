@@ -50,9 +50,23 @@ test('mission workspace bundles local Three.js and the embedded study region', (
 test('2D and 3D views expose a clear reciprocal view switch', () => {
   assert(indexSource.includes('aria-label="View mode"'));
   assert(indexSource.includes('aria-current="page">3D Terrain</span>'));
-  assert(indexSource.includes('href="/?view=map" target="_top">2D Explorer</a>'));
+  assert(indexSource.includes('href="../?view=map" target="_top">2D Explorer</a>'));
   assert(surfaceExplorerSource.includes('aria-current="page">2D EXPLORER</span>'));
-  assert(surfaceExplorerSource.includes('href="/?view=mission">3D TERRAIN</a>'));
+  assert(surfaceExplorerSource.includes('`${baseUrl}?view=mission`'));
+});
+
+test('static deployment keeps the local-only real raster dependency explicit', () => {
+  assert(surfaceExplorerSource.includes('const realRasterLayersAvailable = import.meta.env.DEV;'));
+  assert(surfaceExplorerSource.includes('disabled={!realRasterLayersAvailable}'));
+  assert(surfaceExplorerSource.includes('not hosted here'));
+  assert(surfaceExplorerSource.includes('synthetic test layer only'));
+});
+
+test('application paths honor the configured Vite base URL', () => {
+  const appSource = fs.readFileSync(path.join(__dirname, '../src/App.tsx'), 'utf8');
+  assert(appSource.includes('src={`${baseUrl}mission-control/index.html`}'));
+  const deployWorkflow = fs.readFileSync(path.join(__dirname, '../.github/workflows/deploy-pages.yml'), 'utf8');
+  assert(deployWorkflow.includes('npm run build -- --base=/ARES-Mars-Mission-Control/'));
 });
 
 test('mission interface uses the aurora palette instead of the former orange accent', () => {

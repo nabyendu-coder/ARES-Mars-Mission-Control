@@ -9,6 +9,7 @@ function initialView(): WorkspaceView {
 
 export default function App() {
   const view = initialView();
+  const baseUrl = import.meta.env.BASE_URL;
 
   if (view === "map") {
     return <SurfaceExplorer />;
@@ -18,7 +19,7 @@ export default function App() {
     <main className="mission-workspace">
       <iframe
         className="mission-frame"
-        src="/mission-control/index.html"
+        src={`${baseUrl}mission-control/index.html`}
         title="ARES interactive 3D Mars mission control"
       />
     </main>
